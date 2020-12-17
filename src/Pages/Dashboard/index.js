@@ -19,16 +19,14 @@ import DatePicker from "react-datepicker";
 import moment from "moment";
 import "react-toastify/dist/ReactToastify.css";
 import "react-datepicker/dist/react-datepicker.css";
+import { Bar } from "react-chartjs-2";
 import {
-  Line,
-  Pie,
-  Bar,
-  Scatter,
-  HorizontalBar,
-  Radar,
-  Polar,
-  Bubbler,
-} from "react-chartjs-2";
+  makePostRequest,
+  makeGetRequest,
+  makePutRequest,
+  makeDeleteRequest,
+} from "../../services/http-connectors";
+import config from "../../Config/config";
 
 const customStyles = {
   content: {
@@ -57,6 +55,24 @@ export default class Order extends React.Component {
       },
     };
   }
+
+  componentDidMount() {
+    this.handleIntitiaLoad();
+  }
+
+  handleIntitiaLoad = async (e) => {
+    let response = await makeGetRequest(config.GET_SETTING);
+    console.log("res", response);
+    // if (response.ack === 1) {
+    //     this.setState({
+    //         OrderLists: response.data.menuDetails,
+    //         currency: response.data.currency,
+    //         orderStatus: response.data.orderStatus,
+    //         orderDetails: response.data,
+    //         orderId: orderId
+    //     })
+    // }
+  };
 
   handleSubmit = async (e) => {
     e.preventDefault();
@@ -169,6 +185,7 @@ export default class Order extends React.Component {
               <Col xs={10} sm={10}>
                 <h1 className="pb-2 mainTitle">Dashboards</h1>
               </Col>
+
               <Col xs={2} sm={2}>
                 <div className="mb-2 mt-4">
                   <Button className="btn redButton" onClick={this.openModal}>
@@ -251,7 +268,7 @@ export default class Order extends React.Component {
                     </Row>
                   </Col>
                 </div>
-              </Col>  
+              </Col>
 
               <Col xs={6} sm={6} md={6} lg={6}>
                 <div className="light-bg mt-5">
@@ -281,10 +298,10 @@ export default class Order extends React.Component {
                   </Col>
                 </div>
               </Col>
-
             </Row>
           </div>
         </Container>
+
         <Modal isOpen={modalOpen} style={customStyles} contentLabel="New order">
           <form>
             <Form className="whiteBg p-4 mb-4">
