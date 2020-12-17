@@ -1,0 +1,17 @@
+
+.mainHeader{
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 9;
+}
+.topRightNavber .dropdown-item {
+    border-bottom: 1px solid #ccc;
+    padding: 0 10px;
+}
+.topRightNavber .dropdown-item:last-child{
+    border-bottom: none;    
+}
+.topRightNavber .dropdown-item{
+    font-size: 14px;
+}

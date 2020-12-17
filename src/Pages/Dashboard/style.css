@@ -1,0 +1,19 @@
+
+a{
+    text-decoration: none;
+}
+.progress_progress__3WWMQ{
+  width: 120px !important;
+}
+
+
+.width100{
+  width: 100%;
+}
+
+.customDatePickerWidth, 
+.customDatePickerWidth > div.react-datepicker-wrapper, 
+.customDatePickerWidth > div > div.react-datepicker__input-container
+.customDatePickerWidth > div > div.react-datepicker__input-container input {
+   width: 100%;
+}

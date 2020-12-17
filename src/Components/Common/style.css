@@ -1,0 +1,33 @@
+.sidenav---sidenav---_2tBP {
+    position: fixed;
+    background: #ff5959;
+    padding-top: 20px;
+}
+.logo{
+    width: 100%;
+    text-align: center;
+    height: 50px;
+}
+.logo img{
+    width: 60px;
+    padding: 0 10px;
+    transition: all ease-in-out 0.3s;
+}
+.sidenav---sidenav-nav---3tvij .logo img{
+    width: 60px;
+}
+.sidenav---expanded---1KdUL .logo img{
+    width: 100px;
+}
+.sidenav---sidenav-toggle---1KRjR {
+    position: absolute;
+    cursor: pointer !important;
+    top: 0;
+    right: -55px !important;
+}
+.noFix{
+    position: static;
+}
+.logout {
+    padding: 0 10px
+}
