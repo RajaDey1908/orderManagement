@@ -28,6 +28,11 @@ import {
 } from "../../services/http-connectors";
 import config from "../../Config/config";
 
+import TopSale from "./TopSale"
+import CurrentSale from "./CurrentSale"
+import Graph from "./Graph"
+import SaleRatio from "./SaleRatio"
+
 const customStyles = {
   content: {
     top: "20%",
@@ -40,7 +45,7 @@ const customStyles = {
   },
 };
 
-export default class Order extends React.Component {
+export default class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -198,48 +203,7 @@ export default class Order extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>Top 20 Selling Products(Last 7 days)</h5>
-                    <Row>
-                      <Table responsive className="tableUnic">
-                        <thead className="red-bg">
-                          <tr>
-                            <th>Product</th>
-                            <th>Quantity</th>
-                            <th>Total Ammount</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {/* {props.dashboardDetails &&
-                      props.dashboardDetails.recentOrder &&
-                      props.dashboardDetails.recentOrder.map((data, key) => {
-                        return (
-                          <tr>
-                            <td>{data.orderNumber} </td>
-                            <td>
-                              {data.customerDtls
-                                ? data.customerDtls.length > 0
-                                  ? data.customerDtls[0].locationName
-                                  : ""
-                                : ""}
-                            </td>
-                            <td>
-                            </td>
-                            <td>
-                              {moment(data.createdDate).format(
-                                "MMM Do YY h:mm a"
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })} */}
-
-                          <tr>
-                            <td>2513</td>
-                            <td>David Alba</td>
-                            <td>StreetName 10, 1325</td>
-                          </tr>
-                        </tbody>
-                      </Table>
-                    </Row>
+                    <TopSale/>                  
                   </Col>
                 </div>
               </Col>
@@ -248,24 +212,7 @@ export default class Order extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>High vs Low</h5>
-                    <Row>
-                      <Table responsive className="tableUnic">
-                        <thead className="red-bg">
-                          <tr>
-                            <th>Total Sale Till Date</th>
-                            <th>Highest Selling Product</th>
-                            <th>Lowest Selling Product</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td>2513</td>
-                            <td>David Alba</td>
-                            <td>StreetName 10, 1325</td>
-                          </tr>
-                        </tbody>
-                      </Table>
-                    </Row>
+                    <SaleRatio/>
                   </Col>
                 </div>
               </Col>
@@ -274,16 +221,7 @@ export default class Order extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>Sale in Last 3 Months</h5>
-                    <Row>
-                      <Table responsive className="tableUnic">
-                        <tbody>
-                          <tr>
-                            <td>2513</td>
-                            <td>David Alba</td>
-                          </tr>
-                        </tbody>
-                      </Table>
-                    </Row>
+                    <CurrentSale/>
                   </Col>
                 </div>
               </Col>
@@ -292,9 +230,7 @@ export default class Order extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>Quantity vs Sale</h5>
-                    <Row>
-                      <Bar ref="chart" data={data} />
-                    </Row>
+                    <Graph data={data}/>
                   </Col>
                 </div>
               </Col>
