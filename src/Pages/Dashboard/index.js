@@ -27,11 +27,11 @@ import {
   makeDeleteRequest,
 } from "../../services/http-connectors";
 import config from "../../Config/config";
-
-import TopSale from "./TopSale"
-import CurrentSale from "./CurrentSale"
-import Graph from "./Graph"
-import SaleRatio from "./SaleRatio"
+import { countryCodes } from "../../Config/countrycodes";
+import TopSale from "./TopSale";
+import CurrentSale from "./CurrentSale";
+import Graph from "./Graph";
+import SaleRatio from "./SaleRatio";
 
 const customStyles = {
   content: {
@@ -67,7 +67,7 @@ export default class Dashboard extends React.Component {
 
   handleIntitiaLoad = async (e) => {
     let response = await makeGetRequest(config.GET_SETTING);
-    console.log("res", response);
+    // console.log("res", response);
     // if (response.ack === 1) {
     //     this.setState({
     //         OrderLists: response.data.menuDetails,
@@ -90,11 +90,19 @@ export default class Dashboard extends React.Component {
     });
     if (this.state.errors.formIsValid) {
       console.log("form validate");
-      // let data = {
-      //   store_id: this.state.fields.store_id,
-      //   orderId: this.state.fields.orderId,
-      //   order_amount: parseFloat(this.state.fields.order_amount).toFixed(2)
-      // };
+      console.log("this.state.fields", this.state.fields);
+      let finalSalePrice = (this.state.fields.salePrice * 113.5) / 100;
+      let data = {
+        orderDate: this.state.fields.orderDate,
+        product: this.state.fields.product,
+        price: this.state.fields.price,
+        // salePrice: this.state.fields.salePrice,
+        salePrice: parseFloat(finalSalePrice).toFixed(2),
+        // order_amount: parseFloat(this.state.fields.order_amount).toFixed(2)
+      };
+      console.log("data", data);
+      // errors['salePrice'] = "Decimal Limit Upto Two Digit";
+      //     errors['formIsValid'] = false;
       // ordersRef
       //   .push(data)
       //   .then(res => {
@@ -138,6 +146,7 @@ export default class Dashboard extends React.Component {
   };
 
   inputChangeHandler = (value, name) => {
+    let productPrice = "";
     let fields = this.state.fields;
     fields[name] = value;
     this.setState({ fields });
@@ -148,6 +157,20 @@ export default class Dashboard extends React.Component {
         this.state.errors
       ),
     });
+    if (name == "product") {
+      let productDetails = value.split("-");
+      productPrice = productDetails[0];
+
+      var newFields = { ...this.state.fields };
+      newFields.price = productPrice;
+      this.setState({ fields:newFields });
+
+      // this.setState({
+      //   fields: {
+      //     price: productPrice,
+      //   },
+      // });
+    }
   };
 
   render() {
@@ -181,7 +204,7 @@ export default class Dashboard extends React.Component {
         },
       ],
     };
-
+    // console.log(this.state.errors)
     return (
       <React.Fragment>
         <Container fluid={true} className="pl-0">
@@ -203,7 +226,7 @@ export default class Dashboard extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>Top 20 Selling Products(Last 7 days)</h5>
-                    <TopSale/>                  
+                    <TopSale />
                   </Col>
                 </div>
               </Col>
@@ -212,7 +235,7 @@ export default class Dashboard extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>High vs Low</h5>
-                    <SaleRatio/>
+                    <SaleRatio />
                   </Col>
                 </div>
               </Col>
@@ -221,7 +244,7 @@ export default class Dashboard extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>Sale in Last 3 Months</h5>
-                    <CurrentSale/>
+                    <CurrentSale />
                   </Col>
                 </div>
               </Col>
@@ -230,7 +253,7 @@ export default class Dashboard extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>Quantity vs Sale</h5>
-                    <Graph data={data}/>
+                    <Graph data={data} />
                   </Col>
                 </div>
               </Col>
@@ -254,7 +277,7 @@ export default class Dashboard extends React.Component {
                         selected={this.state.fields.orderDate}
                         onChange={(date) => {
                           this.inputChangeHandler(date, "orderDate");
-                          this.setState({ orderDate: date });
+                          // this.setState({ orderDate: date });
                         }}
                       />
                       <p className="text-danger">
@@ -268,15 +291,28 @@ export default class Dashboard extends React.Component {
                 <Col xs={12} sm={12}>
                   <FormGroup>
                     <Label>Product </Label>
-                    <FloatingInput
-                      type="text"
-                      name="product"
-                      value={this.state.fields.product}
-                      onChange={(e) =>
-                        this.inputChangeHandler(e.target.value, "product")
-                      }
-                      errorMessage={this.state.errors["product"]}
-                    />
+                    <div className="d-flex justify-content between">
+                      <select
+                        className="select-group form-control"
+                        value={this.state.fields.product}
+                        // onChange={this.handleChange}
+                        onChange={(e) =>
+                          this.inputChangeHandler(e.target.value, "product")
+                        }
+                      >
+                        {countryCodes &&
+                          countryCodes.map((data, index) => {
+                            return (
+                              <option value={data.dial_code + "-" + data.code}>
+                                {data.name}
+                              </option>
+                            );
+                          })}
+                      </select>
+                    </div>
+                    <p className="text-danger">
+                      <small>{this.state.errors["product"]}</small>
+                    </p>
                   </FormGroup>
                 </Col>
               </Row>
@@ -288,9 +324,10 @@ export default class Dashboard extends React.Component {
                       type="text"
                       name="price"
                       value={this.state.fields.price}
-                      onChange={(e) =>
-                        this.inputChangeHandler(e.target.value, "price")
-                      }
+                      disabled
+                      // onChange={(e) =>
+                      //   this.inputChangeHandler(e.target.value, "price")
+                      // }
                       errorMessage={this.state.errors["price"]}
                     />
                   </FormGroup>
