@@ -1,55 +1,60 @@
 import React, { useState } from "react";
-import {
-  Row,
-  Col,
-  Form,
-  Label,
-  FormGroup,
-  Button,
-  Container,
-  Table,
-} from "reactstrap";
-import Modal from "react-modal";
+import { Row, Table } from "reactstrap";
 import "./style.css";
-import FloatingInput from "../../Components/Validation/floatingInput";
-import Validator from "../../Components/Validation/Validator";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ToastContainer, toast } from "react-toastify";
-import DatePicker from "react-datepicker";
 import moment from "moment";
 import "react-toastify/dist/ReactToastify.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { Bar } from "react-chartjs-2";
-import {
-  makePostRequest,
-  makeGetRequest,
-  makePutRequest,
-  makeDeleteRequest,
-} from "../../services/http-connectors";
-import config from "../../Config/config";
-
-const customStyles = {
-  content: {
-    top: "20%",
-    left: "20%",
-    right: "20%",
-    // right: 'auto',
-    // bottom: 'auto',
-    // marginRight: '-50%',
-    // transform: 'translate(-50%, -50%)'
-  },
-};
 
 export default class CurrentSale extends React.Component {
   render() {
+    var lastMonth = moment().subtract(1, "month").format("MMM YYYY");
+    var firstPrevious = moment().subtract(2, "month").format("MMM YYYY");
+    var secondPrevious = moment().subtract(3, "month").format("MMM YYYY");
+
     return (
       <React.Fragment>
         <Row>
           <Table responsive className="tableUnic">
             <tbody>
               <tr>
-                <td>2513</td>
-                <td>David Alba</td>
+                <td>{lastMonth}</td>
+                <td>
+                  {"$"}
+                  {this.props.currentProduct.productsLast &&
+                  this.props.currentProduct.productsLast.length > 0
+                    ? this.props.currentProduct.productsLast[0]
+                      ? this.props.currentProduct.productsLast[0].totalAmount
+                      : ""
+                    : ""}
+                </td>
+              </tr>
+
+              <tr>
+                <td>{firstPrevious}</td>
+                <td>
+                  {"$"}
+                  {this.props.currentProduct.productsFirstPrevious &&
+                  this.props.currentProduct.productsFirstPrevious.length > 0
+                    ? this.props.currentProduct.productsFirstPrevious[0]
+                      ? this.props.currentProduct.productsFirstPrevious[0]
+                          .totalAmount
+                      : ""
+                    : ""}
+                </td>
+              </tr>
+
+              <tr>
+                <td>{secondPrevious}</td>
+                <td>
+                  {"$"}
+                  {this.props.currentProduct.productsSecondPrevious &&
+                  this.props.currentProduct.productsSecondPrevious.length > 0
+                    ? this.props.currentProduct.productsSecondPrevious[0]
+                      ? this.props.currentProduct.productsSecondPrevious[0]
+                          .totalAmount
+                      : ""
+                    : ""}
+                </td>
               </tr>
             </tbody>
           </Table>

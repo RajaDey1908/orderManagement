@@ -1,7 +1,10 @@
 const base = {
-  baseURL: "http://111.93.169.90:5025/", // Change Api when develop
-  LOGIN: "/user-api/user/login", // Change Api when develop
-  GET_SETTING: "/setting-api/setting"
+  baseURL: "http://192.168.1.103:3029/",
+  GET_PRODUCT: "product/productList",
+  ADD_ORDER: "order/order",
+  TOP_SALE_PRODUCT: "order/topSaleProduct",
+  CURRENT_PRODUCT: "order/currentProduct",
+  SALE_RATIO: "order/saleRatio",
 };
 export default base;
 

@@ -23,11 +23,8 @@ import { Bar } from "react-chartjs-2";
 import {
   makePostRequest,
   makeGetRequest,
-  makePutRequest,
-  makeDeleteRequest,
 } from "../../services/http-connectors";
 import config from "../../Config/config";
-import { countryCodes } from "../../Config/countrycodes";
 import TopSale from "./TopSale";
 import CurrentSale from "./CurrentSale";
 import Graph from "./Graph";
@@ -38,10 +35,6 @@ const customStyles = {
     top: "20%",
     left: "20%",
     right: "20%",
-    // right: 'auto',
-    // bottom: 'auto',
-    // marginRight: '-50%',
-    // transform: 'translate(-50%, -50%)'
   },
 };
 
@@ -58,6 +51,10 @@ export default class Dashboard extends React.Component {
         price: "",
         salePrice: "",
       },
+      products: [],
+      topSaleProduct: [],
+      currentProduct: [],
+      saleRatio: [],
     };
   }
 
@@ -66,17 +63,30 @@ export default class Dashboard extends React.Component {
   }
 
   handleIntitiaLoad = async (e) => {
-    let response = await makeGetRequest(config.GET_SETTING);
-    // console.log("res", response);
-    // if (response.ack === 1) {
-    //     this.setState({
-    //         OrderLists: response.data.menuDetails,
-    //         currency: response.data.currency,
-    //         orderStatus: response.data.orderStatus,
-    //         orderDetails: response.data,
-    //         orderId: orderId
-    //     })
-    // }
+    let productResponse = await makeGetRequest(config.GET_PRODUCT);
+    if (productResponse.ack === 1) {
+      this.setState({
+        products: productResponse.data,
+      });
+    }
+    let topSaleProductResponse = await makeGetRequest(config.TOP_SALE_PRODUCT);
+    if (topSaleProductResponse.ack === 1) {
+      this.setState({
+        topSaleProduct: topSaleProductResponse.data,
+      });
+    }
+    let currentProductResponse = await makeGetRequest(config.CURRENT_PRODUCT);
+    if (currentProductResponse.ack === 1) {
+      this.setState({
+        currentProduct: currentProductResponse.data,
+      });
+    }
+    let saleRatioResponse = await makeGetRequest(config.SALE_RATIO);
+    if (saleRatioResponse.ack === 1) {
+      this.setState({
+        saleRatio: saleRatioResponse.data,
+      });
+    }
   };
 
   handleSubmit = async (e) => {
@@ -90,37 +100,29 @@ export default class Dashboard extends React.Component {
     });
     if (this.state.errors.formIsValid) {
       console.log("form validate");
-      console.log("this.state.fields", this.state.fields);
       let finalSalePrice = (this.state.fields.salePrice * 113.5) / 100;
+      let productDetails = this.state.fields.product.split("-");
+      let finalProduct = productDetails[1];
+
       let data = {
         orderDate: this.state.fields.orderDate,
-        product: this.state.fields.product,
-        price: this.state.fields.price,
-        // salePrice: this.state.fields.salePrice,
+        productId: finalProduct,
         salePrice: parseFloat(finalSalePrice).toFixed(2),
-        // order_amount: parseFloat(this.state.fields.order_amount).toFixed(2)
       };
       console.log("data", data);
-      // errors['salePrice'] = "Decimal Limit Upto Two Digit";
-      //     errors['formIsValid'] = false;
-      // ordersRef
-      //   .push(data)
-      //   .then(res => {
-      //     // alert("Orders created");
-      //     toast("Orders Added Successfully");
-      //     this.setState({
-      //       errors: {},
-      //       fields: {
-      //         store_id: "",
-      //         orderId: "",
-      //         order_amount: ""
-      //       }
-      //     });
-      //     this.props.handleInitialLoad();
-      //   })
-      //   .catch(err => {
-      //     console.log(err);
-      //   });
+      let response = await makePostRequest(config.ADD_ORDER, false, data);
+      toast(response.msg);
+      this.setState({
+        errors: {},
+        fields: {
+          orderDate: "",
+          product: "",
+          price: "",
+          salePrice: "",
+        },
+        modalOpen: false,
+      });
+      this.handleIntitiaLoad();
     } else {
       console.log(" form not validate");
     }
@@ -141,6 +143,12 @@ export default class Dashboard extends React.Component {
 
   openModal = async () => {
     this.setState({
+      fields: {
+        orderDate: "",
+        product: "",
+        price: "",
+        salePrice: "",
+      },
       modalOpen: true,
     });
   };
@@ -163,7 +171,7 @@ export default class Dashboard extends React.Component {
 
       var newFields = { ...this.state.fields };
       newFields.price = productPrice;
-      this.setState({ fields:newFields });
+      this.setState({ fields: newFields });
 
       // this.setState({
       //   fields: {
@@ -174,37 +182,88 @@ export default class Dashboard extends React.Component {
   };
 
   render() {
+    var lastMonth = moment().subtract(1, "month").format("MMM YYYY");
+    var firstPrevious = moment().subtract(2, "month").format("MMM YYYY");
+    var secondPrevious = moment().subtract(3, "month").format("MMM YYYY");
+
     const { modalOpen } = this.state;
     var maxDate = new Date();
     maxDate.setDate(maxDate.getDate() + 7);
     let minDate = new Date(moment());
     const data = {
-      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      labels: [lastMonth, firstPrevious, secondPrevious],
       datasets: [
         {
-          label: "My First dataset",
+          label: "Quantity",
           backgroundColor: "rgba(255,99,132,0.2)",
           borderColor: "rgba(255,99,132,1)",
           borderWidth: 1,
           //stack: 1,
           hoverBackgroundColor: "rgba(255,99,132,0.4)",
           hoverBorderColor: "rgba(255,99,132,1)",
-          data: [65, 59, 80, 81, 56, 55, 40],
+          data:[45, 79, 50, 41, 16, 85, 20],
+          // data: [
+          //   this.state.currentProduct &&
+          //   this.state.currentProduct.productsLast &&
+          //   this.state.currentProduct.productsLast.length > 0
+          //     ? this.state.currentProduct.productsLast[0]
+          //       ? this.state.currentProduct.productsLast[0].count
+          //       : 0
+          //     : 0,
+          //   this.state.currentProduct &&
+          //   this.state.currentProduct.productsFirstPrevious &&
+          //   this.state.currentProduct.productsFirstPrevious.length > 0
+          //     ? this.state.currentProduct.productsFirstPrevious[0]
+          //       ? this.state.currentProduct.productsFirstPrevious[0].count
+          //       : 0
+          //     : 0,
+          //   this.state.currentProduct &&
+          //   this.state.currentProduct.productsSecondPrevious &&
+          //   this.state.currentProduct.productsSecondPrevious.length > 0
+          //     ? this.state.currentProduct.productsSecondPrevious[0]
+          //       ? this.state.currentProduct.productsSecondPrevious[0].count
+          //       : 0
+          //     : 0,
+          //   81,
+          // ],
         },
 
         {
-          label: "My second dataset",
+          label: "Sale",
           backgroundColor: "rgba(155,231,91,0.2)",
           borderColor: "rgba(255,99,132,1)",
           borderWidth: 1,
           //stack: 1,
           hoverBackgroundColor: "rgba(255,99,132,0.4)",
           hoverBorderColor: "rgba(255,99,132,1)",
-          data: [45, 79, 50, 41, 16, 85, 20],
+          data:[65, 59, 80, 81, 56, 55, 40]
+          // data: [
+          //   this.state.currentProduct &&
+          //   this.state.currentProduct.productsLast &&
+          //   this.state.currentProduct.productsLast.length > 0
+          //     ? this.state.currentProduct.productsLast[0]
+          //       ? this.state.currentProduct.productsLast[0].totalAmount
+          //       : 0
+          //     : 0,
+          //   this.state.currentProduct &&
+          //   this.state.currentProduct.productsFirstPrevious &&
+          //   this.state.currentProduct.productsFirstPrevious.length > 0
+          //     ? this.state.currentProduct.productsFirstPrevious[0]
+          //       ? this.state.currentProduct.productsFirstPrevious[0].totalAmount
+          //       : 0
+          //     : 0,
+          //   this.state.currentProduct &&
+          //   this.state.currentProduct.productsSecondPrevious &&
+          //   this.state.currentProduct.productsSecondPrevious.length > 0
+          //     ? this.state.currentProduct.productsSecondPrevious[0]
+          //       ? this.state.currentProduct.productsSecondPrevious[0].totalAmount
+          //       : 0
+          //     : 0,
+          //   41,
+          // ],
         },
       ],
     };
-    // console.log(this.state.errors)
     return (
       <React.Fragment>
         <Container fluid={true} className="pl-0">
@@ -226,7 +285,7 @@ export default class Dashboard extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>Top 20 Selling Products(Last 7 days)</h5>
-                    <TopSale />
+                    <TopSale topSaleProduct={this.state.topSaleProduct} />
                   </Col>
                 </div>
               </Col>
@@ -235,7 +294,7 @@ export default class Dashboard extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>High vs Low</h5>
-                    <SaleRatio />
+                    <SaleRatio saleRatio={this.state.saleRatio} />
                   </Col>
                 </div>
               </Col>
@@ -244,7 +303,7 @@ export default class Dashboard extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>Sale in Last 3 Months</h5>
-                    <CurrentSale />
+                    <CurrentSale currentProduct={this.state.currentProduct} />
                   </Col>
                 </div>
               </Col>
@@ -253,7 +312,10 @@ export default class Dashboard extends React.Component {
                 <div className="light-bg mt-5">
                   <Col sm={12}>
                     <h5>Quantity vs Sale</h5>
-                    <Graph data={data} />
+                    <Graph
+                      data={data}
+                      currentProduct={this.state.currentProduct}
+                    />
                   </Col>
                 </div>
               </Col>
@@ -300,10 +362,12 @@ export default class Dashboard extends React.Component {
                           this.inputChangeHandler(e.target.value, "product")
                         }
                       >
-                        {countryCodes &&
-                          countryCodes.map((data, index) => {
+                        <option value="">Please Select Product</option>
+                        {this.state.products &&
+                          this.state.products.length > 0 &&
+                          this.state.products.map((data, index) => {
                             return (
-                              <option value={data.dial_code + "-" + data.code}>
+                              <option value={data.price + "-" + data._id}>
                                 {data.name}
                               </option>
                             );

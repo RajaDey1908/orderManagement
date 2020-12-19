@@ -52,7 +52,7 @@ export const makeGetRequest = async (
   }
   return new Promise((resolve, reject) => {
     try {
-      fetch(config.baseURL + "app" + url + queryString, {
+      fetch(config.baseURL + url + queryString, {
         method: "GET",
         headers: headers,
       })
@@ -109,7 +109,7 @@ export const makePostRequest = async (
   }
   return new Promise((resolve, reject) => {
     try {
-      fetch(config.baseURL + "app" + url, {
+      fetch(config.baseURL + url, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(params),

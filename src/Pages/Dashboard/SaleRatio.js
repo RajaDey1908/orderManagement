@@ -1,44 +1,10 @@
 import React, { useState } from "react";
 import {
   Row,
-  Col,
-  Form,
-  Label,
-  FormGroup,
-  Button,
-  Container,
   Table,
 } from "reactstrap";
-import Modal from "react-modal";
 import "./style.css";
-import FloatingInput from "../../Components/Validation/floatingInput";
-import Validator from "../../Components/Validation/Validator";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { ToastContainer, toast } from "react-toastify";
-import DatePicker from "react-datepicker";
-import moment from "moment";
-import "react-toastify/dist/ReactToastify.css";
-import "react-datepicker/dist/react-datepicker.css";
-import { Bar } from "react-chartjs-2";
-import {
-  makePostRequest,
-  makeGetRequest,
-  makePutRequest,
-  makeDeleteRequest,
-} from "../../services/http-connectors";
-import config from "../../Config/config";
 
-const customStyles = {
-  content: {
-    top: "20%",
-    left: "20%",
-    right: "20%",
-    // right: 'auto',
-    // bottom: 'auto',
-    // marginRight: '-50%',
-    // transform: 'translate(-50%, -50%)'
-  },
-};
 
 export default class SaleRatio extends React.Component {
   render() {
@@ -55,9 +21,44 @@ export default class SaleRatio extends React.Component {
             </thead>
             <tbody>
               <tr>
-                <td>2513</td>
-                <td>David Alba</td>
-                <td>StreetName 10, 1325</td>
+                <td>
+                  {this.props.saleRatio.totalAmount &&
+                  this.props.saleRatio.totalAmount.length > 0
+                    ? this.props.saleRatio.totalAmount[0]
+                      ? this.props.saleRatio.totalAmount[0].totalAmount
+                      : ""
+                    : ""}
+                </td>
+                <td>
+                  {this.props.saleRatio.highestSellingProduct &&
+                  this.props.saleRatio.highestSellingProduct.length > 0
+                    ? this.props.saleRatio.highestSellingProduct[0]
+                      ? this.props.saleRatio.highestSellingProduct[0]
+                          .productDetails
+                        ? this.props.saleRatio.highestSellingProduct[0]
+                            .productDetails[0].name
+                          ? this.props.saleRatio.highestSellingProduct[0]
+                              .productDetails[0].name
+                          : ""
+                        : ""
+                      : ""
+                    : ""}
+                </td>
+                <td>
+                  {this.props.saleRatio.lowestSellingProduct &&
+                  this.props.saleRatio.lowestSellingProduct.length > 0
+                    ? this.props.saleRatio.lowestSellingProduct[0]
+                      ? this.props.saleRatio.lowestSellingProduct[0]
+                          .productDetails
+                        ? this.props.saleRatio.lowestSellingProduct[0]
+                            .productDetails[0].name
+                          ? this.props.saleRatio.lowestSellingProduct[0]
+                              .productDetails[0].name
+                          : ""
+                        : ""
+                      : ""
+                    : ""}
+                </td>
               </tr>
             </tbody>
           </Table>
