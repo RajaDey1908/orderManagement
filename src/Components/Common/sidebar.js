@@ -1,12 +1,6 @@
 import React, { Component } from "react";
 import SideNav, { NavItem, NavIcon, NavText } from "@trendmicro/react-sidenav";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHome,
-  faStore,
-  faCartPlus,
-  faPlusSquare
-} from "@fortawesome/free-solid-svg-icons";
 
 import "./style.css";
 import {
@@ -21,7 +15,7 @@ const Sidebar = props => {
         <SideNav.Toggle />
         <SideNav.Nav defaultSelected="home">
 
-          <NavItem eventKey="dashboard">
+          <NavItem eventKey="">
             <NavIcon>
               <FontAwesomeIcon icon={faClipboard} />
             </NavIcon>

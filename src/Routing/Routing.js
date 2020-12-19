@@ -9,7 +9,6 @@ import "../Pages/style.css";
 import "@trendmicro/react-sidenav/dist/react-sidenav.css";
 import DefaultLayout from "../Layout/DefaultLayout";
 
-import Map from "../Pages/Map";
 import Dashboard from "../Pages/Dashboard";
 
 export default class Routing extends React.Component {
@@ -18,9 +17,7 @@ export default class Routing extends React.Component {
       <Router>
         <DefaultLayout>
           <Switch>
-            <Route exact path="/" component={Map} />
-            {/* <Route exact path="/" render={() => { return (<Redirect to="/map" />) }} /> */}
-            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/" component={Dashboard} />
           </Switch>
         </DefaultLayout>
       </Router>
